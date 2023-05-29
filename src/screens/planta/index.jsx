@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import { styles } from './styles';
-import { PLANTAS } from '../../constants';
 
-const Planta = ({ route }) => {
-  const { plantaId } = route.params;
-  const planta = PLANTAS.find((planta) => planta.id === plantaId);
+const Planta = () => {
+  const planta = useSelector((state) => state.plants.selected);
 
   return (
     <View style={styles.container}>

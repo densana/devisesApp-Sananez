@@ -1,26 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, FlatList } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { styles } from './styles';
 import { PlantaItem } from '../../components';
-import { PLANTAS } from '../../constants/data/plantas';
+import { filterPlants, selectPlant } from '../../store/actions';
 
 const Plantas = ({ navigation, route }) => {
-  const { categoryId, color } = route.params;
+  const dispatch = useDispatch();
+  const category = useSelector((state) => state.categories.selected);
+  const filteredPlants = useSelector((state) => state.plants.filteredPlants);
+
   const onSelected = (item) => {
+    dispatch(selectPlant(item.id));
     navigation.navigate('Planta', {
-      plantaId: item.id,
       name: item.title,
     });
   };
-  const filteredplantas = PLANTAS.filter((planta) => planta.categoryId === categoryId);
 
-  const renderItem = ({ item }) => <PlantaItem item={item} onSelected={onSelected} color={color} />;
+  useEffect(() => {
+    dispatch(filterPlants(category.id));
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <PlantaItem item={item} onSelected={onSelected} color={category.color} />
+  );
   const keyExtractor = (item) => item.id.toString();
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList data={filteredplantas} renderItem={renderItem} keyExtractor={keyExtractor} />
+      <FlatList data={filteredPlants} renderItem={renderItem} keyExtractor={keyExtractor} />
     </SafeAreaView>
   );
 };
